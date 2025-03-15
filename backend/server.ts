@@ -12,7 +12,13 @@ type CouponCreateManyInput = Prisma.CouponCreateManyInput;
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: [
+      "http://localhost:5173",
+      "https://assignment-sales-studio-frontend.onrender.com/"
+    ], 
+    credentials: true 
+  })
+);
 
 // Coupon creation route
   app.post("/add-coupons", async (req: Request, res: Response) => {
@@ -51,6 +57,7 @@ app.use(cors({ origin: "http://localhost:5173", credentials: true }));
         if (!userCookie) {
             const uniqueToken = `${userIp}-${Date.now()}`
             res.cookie("claimToken", uniqueToken, {maxAge: 60 * 60 * 1000})
+            return
         }
  
         const lastClaimed = await prisma.claim.findFirst({
@@ -64,6 +71,7 @@ app.use(cors({ origin: "http://localhost:5173", credentials: true }));
                 (lastClaimed.claimedAt.getTime() + 60 * 60 * 1000 - Date.now()) / 60000
             )
             res.status(429).json({message: `You've already claimed a coupon. Try again in ${remainingTime} minutes.`})
+            return
         }
 
         const availableCoupons = await prisma.coupon.findFirst({

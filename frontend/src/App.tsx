@@ -14,7 +14,7 @@ interface Coupon {
 
 // Cooldown period in milliseconds (1 hour)
 const COOLDOWN_PERIOD = 60 * 60 * 1000;
-const url = "https://assignment-sales-studio-backend.onrender.com";
+const url = "https://assignment-sales-studio.onrender.com";
 
 export default function CouponDistribution() {
   const [availableCoupons, setAvailableCoupons] = useState<Coupon[]>([]);
@@ -104,8 +104,6 @@ export default function CouponDistribution() {
             {availableCoupons.map((coupon) => (
               <li key={coupon.id} className="p-4 bg-green-100 border border-green-400 rounded-lg">
                 <h3 className="font-bold text-lg">{coupon.code}</h3>
-                <p className="text-sm text-gray-700">{coupon.discount}% off</p>
-                <p className="text-xs text-gray-500">Expires: {new Date(coupon.expiresAt).toLocaleDateString()}</p>
               </li>
             ))}
           </ul>
