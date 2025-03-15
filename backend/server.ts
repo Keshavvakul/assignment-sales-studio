@@ -56,7 +56,12 @@ app.use(cors({ origin: [
 
         if (!userCookie) {
             const uniqueToken = `${userIp}-${Date.now()}`
-            res.cookie("claimToken", uniqueToken, {maxAge: 60 * 60 * 1000})
+            res.cookie("claimToken", uniqueToken, {
+              maxAge: 60 * 60 * 1000,
+              httpOnly: true,
+              secure: true, // Ensure cookies work on HTTPS
+              sameSite: "none", // Required for cross-origin cookies
+            });
             return
         }
  
