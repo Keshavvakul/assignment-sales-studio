@@ -1,119 +1,116 @@
-🎯 Coupon Distribution System
+# Coupon Distribution System
 
-📌 Overview
-
+Overview
 This project implements a Coupon Distribution System designed to:
 
-✅ Distribute coupons fairly to guest users.
+    1. Distribute coupons fairly to guest users.
+    2. Prevent abuse using IP tracking, cookies, and cooldown timers.
+    3. Provide clear user feedback for successful claims and cooldowns.
 
-✅ Prevent abuse using IP tracking, cookies, and cooldown timers.
+## Installation
 
-✅ Provide clear user feedback for successful claims and cooldowns.
+### Frontend Setup (React + Vite + Tailwind)
 
-🛠️ Setup Instructions
+#### Clone the Repo
 
-🔧 Frontend Setup (React + Vite + Tailwind)
+```bash
+  git clone https://github.com/Keshavvakul/assignment-sales-studio
+  cd cd frontend
+```
 
-1️⃣ Clone the frontend repo:
+#### Install dependencies:
 
-git clone <frontend_repo_url>
-cd frontend
+```bash
+  npm install
+```
 
-2️⃣ Install dependencies:
+#### Start the development server
 
-npm install
+```bash
+  npm run dev
+```
 
-3️⃣ Start the development server:
+Frontend runs at: http://localhost:5173
 
-npm run dev
+### Backend Setup (Node.js + Express + Prisma)
 
-✅ Frontend runs at: http://localhost:5173
+#### Clone the backend repo
 
-🔧 Backend Setup (Node.js + Express + Prisma)
+```bash
+  git clone https://github.com/Keshavvakul/assignment-sales-studio
+  cd backend
+```
 
-1️⃣ Clone the backend repo:
+#### Install dependencies:
 
-git clone <backend_repo_url>
-cd backend
+```bash
+  npm install
+```
 
-2️⃣ Install backend dependencies:
+#### Set environment variables
 
-npm install
+Create a .env file in root of the backend folder and inside enter:
 
-3️⃣ Set environment variables:
-Create a .env file:
+```bash
+ DATABASE_URL="your_prisma_db_url"
+```
 
-DATABASE_URL="your_prisma_db_url"
+#### Generate Prisma client and migrate the database:
 
-4️⃣ Generate Prisma client and migrate database:
+```bash
+ npx prisma generate
+ npx prisma migrate dev --name init
+```
 
-npx prisma generate
-npx prisma migrate dev --name init
+#### Start the backend server
 
-5️⃣ Start the backend server:
+```bash
+  npm run dev
+```
 
-npm run dev
+##### Backend runs at: http://localhost:3000
 
-✅ Backend runs at: http://localhost:3000
+## Features
 
-🔥 Abuse Prevention Strategies
+### Abuse Prevention Strategies
 
-🛠️ 1️⃣ IP Tracking
+- Captures the user’s IP.
+- Blocks repeated claims from the same IP within 1 hour.
 
-Captures the user’s IP (req.ip).
+### Cookie Tracking
 
-Blocks repeated claims from the same IP within 1 hour.
+- Generates a unique user identifier on the first visit and stores it in a cookie.
+- Tracks users even if their IP changes (e.g., VPN, mobile network).
 
-🔒 2️⃣ Cookie Tracking
+### Cooldown Timer (1 Hour)
 
-Generates a unique user identifier (uuid) on first visit and stores it in a cookie.
+- Each user (IP + cookie) has a "last claim timestamp" stored in the database.
+- Users trying to claim again before 1 hour see a "Cooldown active" message.
 
-Tracks users even if their IP changes (VPN, mobile network, etc.).
+### Round-Robin Coupon Distribution
 
-⏳ 3️⃣ Cooldown Timer (1 Hour)
+- Coupons are distributed sequentially (sorted by id ASC).
+- Claimed coupons are marked "used" to avoid duplicates.
 
-Each user (IP + cookie) has a "last claim timestamp" stored in the database.
+## User Feedback
 
-Users trying to claim again before 1 hour see a "Cooldown active" message.
+- Success: "You claimed the SUMMER25 coupon!"
+- Cooldown active: "Please wait 15 minutes before claiming another coupon."
+- No coupons left: "No coupons available right now — check back later!"
+- Error: "Something went wrong, please try again."
 
-🛡️ 4️⃣ Round-Robin Coupon Distribution
+## Technologies Used
 
-Coupons are distributed sequentially (sorted by id ASC).
+### Frontend:
 
-Claimed coupons are marked "used" to avoid duplicates.
+- React (Vite) — Fast, lightweight frontend setup
+- TailwindCSS — Clean, responsive styling
+- Axios — API request
+- JS-Cookie — User tracking
 
-🎉 User Feedback
+### Backend
 
-The system provides clear feedback:
-
-✅ Success: 🎉 "You claimed the SUMMER25 coupon!"
-
-✅ Cooldown active: ⏳ "Please wait 15 minutes before claiming another coupon."
-
-✅ No coupons left: 🚫 "No coupons available right now — check back later!"
-
-✅ Error: ❌ "Something went wrong, please try again."
-
-🔥 Technologies Used
-
-🚀 Frontend:
-
-React (Vite) — Fast frontend setup
-
-TailwindCSS — Clean, responsive styling
-
-Axios — API requests
-
-JS-Cookie — User tracking
-
-🔥 Backend:
-
-Node.js + Express — API server
-
-Prisma ORM — Database management
-
-SQLite/PostgreSQL — Database
-
-dotenv — Environment handling
-
-✨ Now you're ready to distribute coupons — fairly, securely, and efficiently! 🚀
+- Node.js + Express — API server
+- Prisma ORM — Database management
+- PostgreSQL — Database
+- dotenv — Environment handling
