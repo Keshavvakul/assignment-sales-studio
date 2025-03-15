@@ -48,20 +48,25 @@ app.use(cors({ origin: [
   });
 
   app.get("/claim-coupon", async (req: Request, res: Response) => {
+    console.log("requested")
     const userIp = (req.ip || req.headers["x-forwarded-for"] || "unknown").toString()
+    console.log(userIp)
     const userAgent = (req.headers["user-agent"] || "unknown").toString()
+    console.log(userAgent)
     const userCookie = req.cookies.claimToken;
+    console.log("user cookie", userCookie)
 
     try {
-
         if (!userCookie) {
+          console.log("user cookie not defined")
             const uniqueToken = `${userIp}-${Date.now()}`
-            res.cookie("claimToken", uniqueToken, {
+           const cookie = res.cookie("claimToken", uniqueToken, {
               maxAge: 60 * 60 * 1000,
               httpOnly: true,
               secure: true, // Ensure cookies work on HTTPS
               sameSite: "none", // Required for cross-origin cookies
             });
+            console.log("cookie: ", cookie)
             return
         }
  
