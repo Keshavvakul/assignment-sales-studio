@@ -14,31 +14,25 @@ interface Coupon {
 
 // Cooldown period in milliseconds (1 hour)
 const COOLDOWN_PERIOD = 60 * 60 * 1000;
+const url = "https://assignment-sales-studio-backend.onrender.com";
 
 export default function CouponDistribution() {
-  // State for available coupons
   const [availableCoupons, setAvailableCoupons] = useState<Coupon[]>([]);
-
-  // State for user tracking (cookies + IP)
   const [userIdentifier, setUserIdentifier] = useState<string>("");
   const [onCooldown, setOnCooldown] = useState<boolean>(false);
   const [cooldownRemaining, setCooldownRemaining] = useState<number>(0);
   const [message, setMessage] = useState<string>("");
 
-  // Initialize user tracking
   useEffect(() => {
-    // Get or create user identifier in cookies
     let userId = Cookies.get("coupon_user_id");
     if (!userId) {
       userId = uuidv4();
       Cookies.set("coupon_user_id", userId, { expires: 7 });
     }
     setUserIdentifier(userId);
-
     fetchCoupons();
   }, []);
 
-  // Check cooldown timer
   useEffect(() => {
     if (onCooldown && cooldownRemaining > 0) {
       const timer = setInterval(() => {
@@ -57,10 +51,9 @@ export default function CouponDistribution() {
     }
   }, [onCooldown, cooldownRemaining]);
 
-  // Fetch available coupons from backend
   const fetchCoupons = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/coupons");
+      const response = await axios.get(`${url}/coupons`);
       setAvailableCoupons(response.data);
     } catch (error) {
       console.error("Failed to load coupons:", error);
@@ -68,7 +61,6 @@ export default function CouponDistribution() {
     }
   };
 
-  // Claim a coupon
   const claimCoupon = async () => {
     if (onCooldown) {
       setMessage(`Please wait ${formatTimeRemaining(cooldownRemaining)} before claiming another coupon.`);
@@ -76,13 +68,13 @@ export default function CouponDistribution() {
     }
 
     try {
-      const response = await axios.get("http://localhost:3000/claim-coupon", {
+      const response = await axios.get(`${url}/claim-coupon`, {
         headers: { "X-User-Identifier": userIdentifier },
       });
 
       if (response.data.coupon) {
         setMessage(`🎉 You claimed the ${response.data.coupon}!`);
-        fetchCoupons(); // Refresh coupon list
+        fetchCoupons();
         setOnCooldown(true);
         setCooldownRemaining(COOLDOWN_PERIOD);
       } else {
@@ -94,7 +86,6 @@ export default function CouponDistribution() {
     }
   };
 
-  // Format cooldown timer
   const formatTimeRemaining = (ms: number) => {
     const minutes = Math.floor((ms / (1000 * 60)) % 60);
     const seconds = Math.floor((ms / 1000) % 60);
@@ -110,7 +101,7 @@ export default function CouponDistribution() {
 
         {availableCoupons.length > 0 ? (
           <ul className="space-y-4">
-            {availableCoupons.map((coupon, index) => (
+            {availableCoupons.map((coupon) => (
               <li key={coupon.id} className="p-4 bg-green-100 border border-green-400 rounded-lg">
                 <h3 className="font-bold text-lg">{coupon.code}</h3>
                 <p className="text-sm text-gray-700">{coupon.discount}% off</p>
